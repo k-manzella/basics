@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "basics"
+version = "0.1.0"
+authors = [ "Kieran Manzella <kieran.manzella@gmail.com>" ]
+description = ""
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.group.dev.dependencies]
+maturin = "^1.6.0"
+pytest = "^8.2.2"
+
+[build-system]
+requires = ["maturin>=1.6,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "basics"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dynamic = ["version"]
