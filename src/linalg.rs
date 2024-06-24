@@ -33,23 +33,41 @@ pub fn normalize(a: Vec<f64>) -> PyResult<Vec<f64>> {
     Ok(result)
 }
 
- 
-// #[pyfunction]
-// pub fn matmul(a: Vec<Vec<f64>>, b: Vec<Vec<f64>>) -> PyResult<Vec<Vec<f64>>> {
-    // let a_m: i32 = a.len();
-    // let a_n: i32 = a.iter().skip(1).len();
-    // let b_n: i32 = b.len();
-    // let b_p: i32 = b.iter().skip(1).len();
-    // if a_n != b_n {
-        // return Err(PyErr::new::<PyValueError, _>("Matrix dimension mismatch"));
-    // }
-// 
-    // 
-    // Ok()
-// }
+
+#[pyfunction]
+pub fn transpose(matrix: Vec<Vec<f64>>) -> PyResult<Vec<Vec<f64>>> {
+    let mut result = vec![vec![0.0; matrix.len()]; matrix[0].len()];
+
+    for i in 0..matrix[0].len() {
+        for j in 0..matrix.len() {
+            result[i][j] = matrix[j][i];
+        }
+    }
+
+    Ok(result)
+}
 
 
-// #[pyfunction]
-// pub fn mat_inverse(a: Vec<Vec<f64>>) -> PyResult<Vec<Vec<f64>>> {
-//     Ok()
-// }
+fn column_slice(matrix: &Vec<Vec<f64>>, index: usize) -> Vec<f64> {
+    let mut slice: Vec<f64> = vec![0.0; matrix.len()];
+    for i in 0..matrix.len() {
+        slice[i] = matrix[i][*&index];
+    }
+
+    slice
+}
+
+
+#[pyfunction]
+pub fn matmul(a: Vec<Vec<f64>>, b: Vec<Vec<f64>>) -> PyResult<Vec<Vec<f64>>> {  
+  let mut result = vec![vec![0.0; a.len()]; b[0].len()];
+  for i in 0..a.len() {
+      let a_row = a[i].clone();
+      for j in 0..b[i].len() {
+          let b_column = column_slice(&b, j);
+          result[i][j] = dot_product(a_row.clone(), b_column)?;
+      }
+  }
+
+  Ok(result)
+}
