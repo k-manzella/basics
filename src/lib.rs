@@ -31,6 +31,7 @@ fn basics(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(linalg::normalize, m)?)?;
     m.add_function(wrap_pyfunction!(linalg::transpose, m)?)?;
     m.add_function(wrap_pyfunction!(linalg::matmul, m)?)?;
+    m.add_function(wrap_pyfunction!(linalg::get_matrix_inverse, m)?)?;
     Ok(())
 }
 
