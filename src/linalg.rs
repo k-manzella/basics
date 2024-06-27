@@ -57,34 +57,35 @@ fn column_slice(matrix: &Vec<Vec<f64>>, index: usize) -> Vec<f64> {
 }
 
 
+fn mat_vec_multiply(m: Vec<Vec<f64>>, v: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
+  let column_vector = column_slice(&v, 0);
+  let mut result_elements = vec![0.0; m.len()];
+  for i in 0..m.len() {
+        let m_row = m[i].clone();
+        result_elements[i] = dot_product(m_row, column_vector.clone()).unwrap();    }
+    // make result a nested vector to satisfy typing (for now)
+  let result = vec![result_elements];
+  return result
+}
+
+
 #[pyfunction]
 pub fn matmul(a: Vec<Vec<f64>>, b: Vec<Vec<f64>>) -> PyResult<Vec<Vec<f64>>> {  
-  if (a[0].len() != b.len()) && (b[0].len() != 1) {
+  if (a[0].len() != b.len()) && (b.len() != 1) {
     return Err(PyErr::new::<PyValueError, _>("Dimension mismatch"));
   }
 
   // special case for multiplying matrix by vector
   // vector still has to be turned into vector of vectors in order to be passed
-  if b[0].len() == 1 {
-    let column_vector = column_slice(&b, 0);
-    let mut result_elements = vec![0.0; a.len()];
-    for i in 0..a.len() {
-        let a_row = a[i].clone();
-        result_elements[i] = dot_product(a_row, column_vector.clone()).unwrap();
-    }
-    // make result a nested vector to satisfy typing (for now)
-    let result = vec![result_elements];
+  if b.len() == 1 {
+    let b_t: Vec<Vec<f64>> = transpose(b).unwrap();
+    let result = mat_vec_multiply(a, b_t);
+    return Ok(result)  
+  } else if b[0].len() == 1 {
+    let result = mat_vec_multiply(a, b);
     return Ok(result)
-  }
+  } 
 
-//  let mut result = vec![vec![0.0; a[0].len()]; b.len()];
-//  for i in 0..a.len() {
-//      let a_row = a[i].clone();
-//      for j in 0..b[i].len() {
-//          let b_column = column_slice(&b, j);
-//          result[i][j] = dot_product(a_row.clone(), b_column.clone()).unwrap();
-//      }
-//  }
   let mut result = Vec::new();
   for i in 0..a.len() {
       let a_row = a[i].clone();
@@ -161,3 +162,19 @@ pub fn get_matrix_inverse(m: Vec<Vec<f64>>) -> PyResult<Vec<Vec<f64>>> {
   Ok(inverse)
 }
 
+
+#[pyfunction]
+pub fn r_squared(y: Vec<f64>, y_hat: Vec<f64>) -> PyResult<f64> {
+  let y_mean: f64 = y.iter().sum::<f64>() / (y.len() as f64);
+  let sst: f64 = y.iter()
+    .map(|y| (y - y_mean).powi(2) )
+    .sum();
+
+  let ssr: f64 = y.iter()
+    .zip(y_hat.iter())
+    .map(|(y_i, y_h)| (y_i - y_h).powi(2) )
+    .sum::<f64>();
+
+  let result = 1.0 - (ssr / sst);
+  Ok(result)
+} 
