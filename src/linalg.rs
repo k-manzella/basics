@@ -170,11 +170,13 @@ pub fn r_squared(y: Vec<f64>, y_hat: Vec<f64>) -> PyResult<f64> {
     .map(|y| (y - y_mean).powi(2) )
     .sum();
 
-  let ssr: f64 = y.iter()
+  let mut ssr: f64 = y.iter()
     .zip(y_hat.iter())
     .map(|(y_i, y_h)| (y_i - y_h).powi(2) )
     .sum::<f64>();
-
+  if ssr.is_nan() {
+    ssr = 0.0;
+  }
   let result = 1.0 - (ssr / sst);
   Ok(result)
 } 

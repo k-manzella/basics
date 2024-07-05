@@ -2,7 +2,6 @@ import numpy as np
 
 import basics
 
-
 def demo_matrix_inverse():
     input_matrix = [
         [1.0, 3.0, 5.3],

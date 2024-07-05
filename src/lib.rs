@@ -1,4 +1,5 @@
 mod linalg;
+mod utils;
 
 use pyo3::prelude::*;
 
@@ -33,9 +34,9 @@ fn basics(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(linalg::matmul, m)?)?;
     m.add_function(wrap_pyfunction!(linalg::get_matrix_inverse, m)?)?;
     m.add_function(wrap_pyfunction!(linalg::r_squared, m)?)?;
+    m.add_function(wrap_pyfunction!(utils::train_test_split, m)?)?;
     Ok(())
 }
-
 
 /// Tests
 #[cfg(test)]

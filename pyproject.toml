@@ -8,6 +8,8 @@ description = ""
 python = "^3.12"
 python-dotenv = "^1.0.1"
 numpy = "^2.0.0"
+notebook = "^7.2.1"
+matplotlib = "^3.9.0"
 
 [tool.poetry.group.dev.dependencies]
 maturin = "^1.6.0"
